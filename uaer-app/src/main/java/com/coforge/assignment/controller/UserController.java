@@ -14,7 +14,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,34 +37,38 @@ public class UserController {
                     content = {@Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = ExceptionResponse.class))})
     })
     @PostMapping(value = "/v1/register")
-    public ResponseEntity<UserResponse> registration(@RequestBody UserDto userDto) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public UserResponse registration(@RequestBody UserDto userDto) {
         log.info("Request to register user {}", userDto);
         userService.saveUser(userDto);
-        return new ResponseEntity<>(new UserResponse("User registered successfully!"), HttpStatus.CREATED);
+        return UserResponse.builder().message("User registered successfully!").code(HttpStatus.CREATED.value()).build();
     }
 
     @Operation(summary = "Login User API")
     @PostMapping(value = "/v1/login", produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserResponse> login(@RequestBody LoginDto loginDto) {
+    @ResponseStatus(HttpStatus.OK)
+    public UserResponse login(@RequestBody LoginDto loginDto) {
         log.info("Request to login {}", loginDto);
         userService.login(loginDto);
-        return new ResponseEntity<>(new UserResponse("User signed-in successfully!"), HttpStatus.OK);
+        return UserResponse.builder().message("User signed-in successfully!").code(HttpStatus.OK.value()).build();
     }
 
     @Operation(summary = "Reset Password API")
     @PostMapping(value = "/v1/reset/password", produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserResponse> resetPassword(@RequestBody ResetPasswordDto resetPasswordDto) {
+    @ResponseStatus(HttpStatus.OK)
+    public UserResponse resetPassword(@RequestBody ResetPasswordDto resetPasswordDto) {
         log.info("Request to reset password {}", resetPasswordDto);
         userService.resetPassword(resetPasswordDto);
-        return new ResponseEntity<>(new UserResponse("Password reset successfully!"), HttpStatus.OK);
+        return UserResponse.builder().message("Password reset successfully!").code(HttpStatus.OK.value()).build();
     }
 
     @Operation(summary = "Get all user API")
     @GetMapping(value = "/all", produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<UserDto>> getAllUsers() {
+    @ResponseStatus(HttpStatus.OK)
+    public UserResponse getAllUsers() {
         log.info("Request to get all users.");
         List<UserDto> users = userService.findAllUsers();
-        return ResponseEntity.ok(users);
+        return UserResponse.builder().usersList(users).code(HttpStatus.OK.value()).build();
     }
 
 }

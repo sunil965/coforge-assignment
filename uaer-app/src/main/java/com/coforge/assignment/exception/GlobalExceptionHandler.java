@@ -22,6 +22,7 @@ public class GlobalExceptionHandler {
         ExceptionResponse exceptionResponse = new ExceptionResponse();
         exceptionResponse.setTimestamp(LocalDateTime.now());
         exceptionResponse.setPath(webRequest.getDescription(false));
+        exceptionResponse.setCode(HttpStatus.BAD_REQUEST.value());
         exceptionResponse.setMessage(exception.getMessage());
         return exceptionResponse;
     }
@@ -33,6 +34,7 @@ public class GlobalExceptionHandler {
         ExceptionResponse exceptionResponse = new ExceptionResponse();
         exceptionResponse.setTimestamp(LocalDateTime.now());
         exceptionResponse.setPath(webRequest.getDescription(false));
+        exceptionResponse.setCode(HttpStatus.NOT_FOUND.value());
         exceptionResponse.setMessage(exception.getMessage());
         return exceptionResponse;
     }
@@ -44,6 +46,7 @@ public class GlobalExceptionHandler {
         ExceptionResponse exceptionResponse = new ExceptionResponse();
         exceptionResponse.setTimestamp(LocalDateTime.now());
         exceptionResponse.setPath(webRequest.getDescription(false));
+        exceptionResponse.setCode(HttpStatus.BAD_REQUEST.value());
         exceptionResponse.setMessage(exception.getMessage());
         return exceptionResponse;
     }
@@ -55,6 +58,7 @@ public class GlobalExceptionHandler {
         ExceptionResponse exceptionResponse = new ExceptionResponse();
         exceptionResponse.setTimestamp(LocalDateTime.now());
         exceptionResponse.setPath(webRequest.getDescription(false));
+        exceptionResponse.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
         exceptionResponse.setMessage(exception.getMessage());
         return exceptionResponse;
     }
