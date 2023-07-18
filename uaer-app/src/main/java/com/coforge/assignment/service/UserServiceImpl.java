@@ -11,7 +11,6 @@ import com.coforge.assignment.kafka.KafKaProducerService;
 import com.coforge.assignment.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +27,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private KafKaProducerService producerService;
+
+    @Autowired
+    private APIClientService apiClientService;
 
 //    @Autowired
 //    private RoleRepository roleRepository;
@@ -83,9 +85,8 @@ public class UserServiceImpl implements UserService {
         if (!existingUser.getPassword().equals(loginDto.getPassword()))
             throw new PasswordMismatchException("password");
 
-        LoginDto loggedInUser = new LoginDto();
-        loggedInUser.setUserEmail(existingUser.getEmail());
-        loggedInUser.setPassword(existingUser.getPassword());
+        LoginDto loggedInUser = new LoginDto(existingUser.getEmail(), existingUser.getPassword());
+        apiClientService.redirectToHome(loggedInUser);
     }
 
     @Override
@@ -105,8 +106,10 @@ public class UserServiceImpl implements UserService {
     @Override
     @Cacheable(value = "users")
     public List<UserDto> findAllUsers() {
-        log.info("Fetch all user list from database.");
-        List<User> users = userRepository.findAll();
+        log.info("Fetch all user list from client/database.");
+//        List<User> users = userRepository.findAll();
+
+        List<User> users = apiClientService.getUsers();
         return users.stream()
                 .map(this::mapToUserDto)
                 .collect(Collectors.toList());
